@@ -6,7 +6,7 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/14 16:14:50 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/15 01:14:57 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 18:52:10 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,8 @@ int	check_map_content(t_map *map)
 
 int	check_map(t_map *map)
 {
-	return (check_map_size(map) && check_map_content(map));
+	if (map && check_map_size(map) && check_map_content(map))
+		return (1);
+	ft_printf("Error\n");
+	return (0);
 }

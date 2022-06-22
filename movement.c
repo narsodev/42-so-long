@@ -6,33 +6,13 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 01:27:43 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/21 18:42:38 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 23:51:39 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "so_long.h"
 #include "libft.h"
-
-t_player	*find_player(t_player **players, size_t x, size_t y)
-{
-	size_t	i;
-
-	i = 0;
-	while (players[i])
-	{
-		if (players[i]->render && players[i]->x == x && players[i]->y == y)
-			return (players[i]);
-		i++;
-	}
-	return (0);
-}
-
-void	get_coin(t_game *game, int x, int y)
-{
-	game->n_c += 1;
-	mlx_draw_texture(game->img, game->floor,
-			x * TEXTURE_SIZE, y * TEXTURE_SIZE);
-}
+#include <stdlib.h>
 
 void	check_win(t_game *game)
 {
@@ -49,91 +29,77 @@ void	check_win(t_game *game)
 	end_game(game);
 }
 
-int	move_player(t_game *game, t_player *player, int x_dir, int y_dir)
+void	move_players_helper(t_game *game, t_list **lst, int x, int y)
 {
-	t_player	*coin;
+	t_player	*player;
 
-	if (ft_strchr("0C", game->map->map[player->y + y_dir][player->x + x_dir]))
+	player = find_player(game->players, x, y);
+	if (player && !ft_lstfind(*lst, player))
 	{
-		player->img->instances[0].x += TEXTURE_SIZE * x_dir;
-		player->img->instances[0].y += TEXTURE_SIZE * y_dir;
-		game->map->map[player->y][player->x] = '0';
-		player->x += x_dir;
-		player->y += y_dir;
-		if (game->map->map[player->y][player->x] == 'C')
-			get_coin(game, player->x, player->y);
-		game->map->map[player->y][player->x] = 'P';
-		return (1);
+		if (move_player(game, player))
+			ft_lstadd_back(lst, ft_lstnew(player));
 	}
-	else if (game->map->map[player->y + y_dir][player->x + x_dir] == 'E' && game->n_c == game->map->n_c)
-	{
-		game->map->map[player->y][player->x] = '0';
-		player->render = 0;
-		mlx_delete_image(game->mlx, player->img);
-		return (2);
-	}
-	return (0);
 }
 
-void	move_players(t_game *game, int x_dir, int y_dir)
+void	ft_fake_dellst(void *foo)
 {
-	size_t	n;
-	int		move_result;
-	int		moved;
+	(void)foo;
+}
 
-	n = 0;
-	moved = 0;
-	// MOVER VIENDOLO EN EL MAPA Y BUSCANDOLO PQ SI NO NO MUEVE BIEN A VECES
-	// tener cuidado cuando coges monedas a la vez q sales
-	while (game->players[n])
+void	move_players(t_game *game)
+{
+	size_t	y;
+	size_t	x;
+	t_list	*lst;
+
+	y = 0;
+	lst = NULL;
+	while (game->map->map[y])
 	{
-		if (game->players[n]->render)
+		x = 0;
+		while (game->map->map[y][x])
 		{
-			move_result = move_player(game, game->players[n], x_dir, y_dir);
-			if (move_result && !moved)
-				moved = 1;
-			if (move_result == 2)
-				moved = 2;
+			if (game->map->map[y][x] == 'P')
+				move_players_helper(game, &lst, x, y);
+			x++;
 		}
-		n++;
+		y++;
 	}
-	if (moved)
+	x = (size_t) lst;
+	ft_lstclear(&lst, ft_fake_dellst);
+	if (x)
 	{
 		game->movements += 1;
 		ft_printf("Movements: %d\n", game->movements);
-	}
-	if (moved == 2)
 		check_win(game);
+	}
 }
 
-void	move_players_reverse(t_game *game, int x_dir, int y_dir)
+void	move_players_reverse(t_game *game)
 {
-	size_t	n;
-	int		move_result;
-	int		moved;
+	size_t	y;
+	size_t	x;
+	t_list	*lst;
 
-	n = game->map->n_p - 1;
-	moved = 0;
-	// MOVER VIENDOLO EN EL MAPA Y BUSCANDOLO PQ SI NO NO MUEVE BIEN CUANDO ESTA DESORDENADO LA POSICION EN MAPA RESPECTO A POSICION DE LOS JUGADORES
-	while (n >= 0)
+	y = game->map->height - 1;
+	lst = NULL;
+	while (y > 0)
 	{
-		if (game->players[n]->render)
+		x = game->map->width - 1;
+		while (x > 0)
 		{
-			move_result = move_player(game, game->players[n], x_dir, y_dir);
-			if (move_result && !moved)
-				moved = 1;
-			if (move_result == 2)
-				moved = 2;
+			if (game->map->map[y][x] == 'P')
+				move_players_helper(game, &lst, x, y);
+			x--;
 		}
-		if (n == 0)
-			break;
-		n--;
+		y--;
 	}
-	if (moved)
+	x = (size_t) lst;
+	ft_lstclear(&lst, ft_fake_dellst);
+	if (x)
 	{
 		game->movements += 1;
 		ft_printf("Movements: %d\n", game->movements);
-	}
-	if (moved == 2)
 		check_win(game);
+	}
 }

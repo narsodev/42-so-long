@@ -1,43 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   checker_utils.c                                    :+:      :+:    :+:   */
+/*   player_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/06/14 16:11:56 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/22 22:44:20 by ngonzale         ###   ########.fr       */
+/*   Created: 2022/06/22 18:28:25 by ngonzale          #+#    #+#             */
+/*   Updated: 2022/06/22 22:43:06 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "so_long.h"
 #include "libft.h"
 
-int	char_is_wall(size_t i, char c)
+t_player	*find_player(t_player **players, size_t x, size_t y)
 {
-	(void)i;
-	return (c == '1');
+	size_t	i;
+
+	i = 0;
+	while (players[i])
+	{
+		if (players[i]->render && players[i]->x == x && players[i]->y == y)
+			return (players[i]);
+		i++;
+	}
+	return (0);
 }
 
-int	char_is_position(size_t i, char c)
+void	get_collectible(t_game *game, int x, int y)
 {
-	(void)i;
-	return (c == 'P');
-}
-
-int	char_is_exit(size_t i, char c)
-{
-	(void)i;
-	return (c == 'E');
-}
-
-int	char_is_collectible(size_t i, char c)
-{
-	(void)i;
-	return (c == 'C');
-}
-
-int	char_is_valid(size_t i, char c)
-{
-	(void)i;
-	return (ft_strchr("01CEP", c) != NULL);
+	game->n_c += 1;
+	mlx_draw_texture(game->img, game->floor,
+		x * TEXTURE_SIZE, y * TEXTURE_SIZE);
 }

@@ -6,7 +6,7 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 19:49:14 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/15 01:27:29 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 22:43:35 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,6 @@ char	**get_map_matrix(char	*mapfile)
 t_map	*parse_map(char *mapfile)
 {
 	t_map	*map;
-	char	*map_raw;
 
 	map = ft_calloc(1, sizeof(t_map));
 	if (!map)

@@ -6,7 +6,7 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/20 17:16:56 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/22 00:36:11 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 22:39:12 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,27 +17,32 @@ void	end_game(t_game *game)
 {
 	free_game(&game);
 	system("leaks -q a.out");
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 void	keys_hook(mlx_key_data_t keydata, void *param)
 {
-	t_game *game;
+	t_game	*game;
 
 	game = (t_game *) param;
-
-
-	if (keydata.key == MLX_KEY_W && keydata.action)
-		move_players_reverse(game, 0, -1);
-	else if (keydata.key == MLX_KEY_A && keydata.action)
-		move_players(game, -1, 0);
-	else if (keydata.key == MLX_KEY_S && keydata.action)
-		move_players(game, 0, 1);
-	else if (keydata.key == MLX_KEY_D && keydata.action)
-		move_players_reverse(game, 1, 0);
-	else if (keydata.key == MLX_KEY_ESCAPE && keydata.action == 1)
+	if (keydata.action)
 	{
-		end_game(game);
+		if (keydata.key == MLX_KEY_ESCAPE)
+			end_game(game);
+		if (keydata.key == MLX_KEY_W)
+			game->mov_y = UP;
+		else if (keydata.key == MLX_KEY_A)
+			game->mov_x = LEFT;
+		else if (keydata.key == MLX_KEY_S)
+			game->mov_y = DOWN;
+		else if (keydata.key == MLX_KEY_D)
+			game->mov_x = RIGHT;
+		if (game->mov_x == UP || game->mov_y == LEFT)
+			move_players(game);
+		if (game->mov_x == RIGHT || game->mov_y == DOWN)
+			move_players_reverse(game);
+		game->mov_x = 0;
+		game->mov_y = 0;
 	}
 }
 

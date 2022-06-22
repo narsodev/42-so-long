@@ -6,7 +6,7 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/15 02:29:31 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/21 19:33:37 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 18:16:30 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,22 @@ void	render_game(t_game *game)
 	render_players(game);
 }
 
+void	render_tile(t_game *game, size_t x, size_t y)
+{
+	if (game->map->map[y][x] == '1')
+		mlx_draw_texture(game->img, game->wall,
+			x * TEXTURE_SIZE, y * TEXTURE_SIZE);
+	else if (game->map->map[y][x] == 'E')
+		mlx_draw_texture(game->img, game->exit,
+			x * TEXTURE_SIZE, y * TEXTURE_SIZE);
+	else if (game->map->map[y][x] == 'C')
+		mlx_draw_texture(game->img, game->collectible,
+			x * TEXTURE_SIZE, y * TEXTURE_SIZE);
+	else
+		mlx_draw_texture(game->img, game->floor,
+			x * TEXTURE_SIZE, y * TEXTURE_SIZE);
+}
+
 void	render_background(t_game *game)
 {
 	size_t	y;
@@ -33,18 +49,7 @@ void	render_background(t_game *game)
 		x = 0;
 		while (x < game->map->width)
 		{
-			if (game->map->map[y][x] == '1')
-				mlx_draw_texture(game->img, game->wall,
-					x * TEXTURE_SIZE, y * TEXTURE_SIZE);
-			else if (game->map->map[y][x] == 'E')
-				mlx_draw_texture(game->img, game->exit,
-					x * TEXTURE_SIZE, y * TEXTURE_SIZE);
-			else if (game->map->map[y][x] == 'C')
-				mlx_draw_texture(game->img, game->collectible,
-					x * TEXTURE_SIZE, y * TEXTURE_SIZE);
-			else
-				mlx_draw_texture(game->img, game->floor,
-					x * TEXTURE_SIZE, y * TEXTURE_SIZE);
+			render_tile(game, x, y);
 			x++;
 		}
 		y++;

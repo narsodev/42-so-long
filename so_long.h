@@ -6,7 +6,7 @@
 /*   By: ngonzale <ngonzale@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/06/08 19:46:42 by ngonzale          #+#    #+#             */
-/*   Updated: 2022/06/22 00:38:26 by ngonzale         ###   ########.fr       */
+/*   Updated: 2022/06/22 22:48:28 by ngonzale         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,11 @@
 # define WALL_TEXTURE "textures/wall128x128.png"
 # define FLOOR_TEXTURE "textures/floor128x128.png"
 # define EXIT_TEXTURE "textures/exit128x128.png"
+
+# define UP -1
+# define LEFT -1
+# define DOWN 1
+# define RIGHT 1
 
 typedef struct s_map {
 	size_t	width;
@@ -49,45 +54,52 @@ typedef struct s_game {
 	size_t			movements;
 	size_t			n_c;
 	size_t			n_p;
+	int				mov_x;
+	int				mov_y;
 	t_player		**players;
 }				t_game;
 
 // Init
-t_game	*create_game(char *mapfile);
+t_game		*create_game(char *mapfile);
+
+// Player
+t_player	**create_players(t_game *game);
+t_player	*find_player(t_player **players, size_t x, size_t y);
+int			move_player(t_game *game, t_player *player);
+t_player	*create_player(t_game *game, size_t x, size_t y);
+void		get_collectible(t_game *game, int x, int y);
 
 // Parser
-t_map	*parse_map(char *mapfile);
+t_map		*parse_map(char *mapfile);
 
 // Checker
-int		check_map(t_map *map);
-int		check_map_size(t_map *map);
-int		check_map_content(t_map *map);
+int			check_map(t_map *map);
 
 // Checker utils
-int		char_is_wall(size_t i, char c);
-int		char_is_position(size_t i, char c);
-int		char_is_exit(size_t i, char c);
-int		char_is_collectible(size_t i, char c);
-int		char_is_valid(size_t i, char c);
+int			char_is_wall(size_t i, char c);
+int			char_is_position(size_t i, char c);
+int			char_is_exit(size_t i, char c);
+int			char_is_collectible(size_t i, char c);
+int			char_is_valid(size_t i, char c);
 
 // Utils
 mlx_image_t	*create_img_from_png(t_game *game, char *pngfile);
 
 // Movement
-void	move_players(t_game *game, int x_dir, int y_dir);
-void	move_players_reverse(t_game *game, int x_dir, int y_dir);
+void		move_players(t_game *game);
+void		move_players_reverse(t_game *game);
 
 // Render
-void	render_game(t_game *game);
+void		render_game(t_game *game);
 
 // Events
-void	end_game(t_game *game);
-void	close_hook(void *param);
-void	keys_hook(mlx_key_data_t keydata, void *param);
+void		end_game(t_game *game);
+void		close_hook(void *param);
+void		keys_hook(mlx_key_data_t keydata, void *param);
 
 // Free
-void	free_game(t_game **game_p);
-void	free_map(t_map *map);
-void	free_players(mlx_t *mlx, t_player **players);
+void		free_game(t_game **game_p);
+void		free_map(t_map *map);
+void		free_players(mlx_t *mlx, t_player **players);
 
 #endif
